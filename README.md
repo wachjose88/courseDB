@@ -1,4 +1,4 @@
 courseDB
 ========
 
-A simple course and address database.
+A simple course and address database will be developed here.
