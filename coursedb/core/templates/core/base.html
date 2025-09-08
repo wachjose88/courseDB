@@ -1,0 +1,59 @@
+{% load static %}
+{% load i18n %}
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>
+            {% block title %}Home{% endblock %}
+            - {% translate 'courseDB' %}
+        </title>
+        <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" crossorigin="anonymous">
+        <link href="{% static 'css/bootstrap-icons.min.css' %}" rel="stylesheet" crossorigin="anonymous">
+        {% block add_to_header %}{% endblock %}
+    </head>
+    <body>
+        <header>
+            <nav class="navbar navbar-expand-lg bg fixed-top-body-tertiary">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="#">{% translate 'courseDB' %}</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="#">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">Features</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <main class="container">
+            {% block content %}{% endblock %}
+        </main>
+
+        <footer>
+
+
+            <nav class="navbar fixed-bottom bg-body-tertiary">
+                <div class="container-fluid">
+                    {% translate 'courseDB' %}
+                </div>
+            </nav>
+
+
+        </footer>
+
+        <script src="{% static 'js/bootstrap.bundle.min.js' %}"
+                crossorigin="anonymous"></script>
+        {% block add_to_end_of_body %}{% endblock %}
+    </body>
+</html>
