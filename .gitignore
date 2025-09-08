@@ -1,27 +1,19 @@
-*.py[co]
+# pycharm
+.idea
 
-# Packages
-*.egg
-*.egg-info
-dist
-build
-eggs
-parts
-bin
-var
-sdist
-develop-eggs
-.installed.cfg
+# bk files
+*~
 
-# Installer logs
-pip-log.txt
+# python binary
+*.pyc
 
-# Unit test / coverage reports
+# devdatabase
+dev-data/*.sqlite3
+dev-data/*.log
+
+# sphinx
+doc/build/*
+
 .coverage
-.tox
 
-#Translations
-*.mo
-
-#Mr Developer
-.mr.developer.cfg
+Thumbs.db*
