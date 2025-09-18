@@ -1,0 +1,33 @@
+{% load static %}
+{% load i18n %}
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>
+            {% block title %}Home{% endblock %}
+            - {% translate 'courseDB' %}
+        </title>
+        <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" crossorigin="anonymous">
+        <link href="{% static 'css/bootstrap-icons.min.css' %}" rel="stylesheet" crossorigin="anonymous">
+        {% block add_to_header %}{% endblock %}
+    </head>
+    <body>
+
+        {% block main_content %}{% endblock %}
+
+        <footer>
+            <nav class="navbar fixed-bottom bg-body-tertiary">
+                <div class="container-fluid">
+                    {% translate 'courseDB' %}
+                </div>
+            </nav>
+        </footer>
+
+        <script src="{% static 'js/bootstrap.bundle.min.js' %}"
+                crossorigin="anonymous"></script>
+        {% block add_to_end_of_body %}{% endblock %}
+    </body>
+</html>
