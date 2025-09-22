@@ -6,3 +6,4 @@ django-tinymce
 phonenumbers
 django-phonenumber-field[phonenumbers]
 django-widget-tweaks
+babel

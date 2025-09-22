@@ -2,8 +2,8 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
 
-from core.forms import UserAdminForm
-from core.models import User, Company
+from core.forms import UserAdminForm, CompanyAdminForm, ClientAdminForm
+from core.models import User, Company, Client, Family
 
 
 class LocalUserAdmin(UserAdmin):
@@ -34,21 +34,12 @@ class UserInline(admin.TabularInline):
     verbose_name_plural = _('Users')
 
     def has_add_permission(self, request, obj=None):
-        """
-        Removes the permission to add.
-        """
         return False
 
     def has_change_permission(self, request, obj=None):
-        """
-        Removes the permission to change.
-        """
         return False
 
     def has_delete_permission(self, request, obj=None):
-        """
-        Removes the permission to delete.
-        """
         return False
 
 
@@ -59,10 +50,52 @@ class CompanyAdmin(admin.ModelAdmin):
     list_display = ('name',)
     search_fields = ('name',)
     list_filter = ('country',)
+    form = CompanyAdminForm
+
+
+class ClientAdmin(admin.ModelAdmin):
+
+    fields = ('gender', 'letter_salutation', 'prefixed_title', 'first_name',
+              'last_name', 'postfixed_title', 'job_title',
+              'street', 'zipcode', 'city', 'country', 'email', 'phone', 'job',
+              'additional_info', 'family')
+    list_display = ('name',)
+    search_fields = ('first_name', 'last_name')
+    list_filter = ('country',)
+    form = ClientAdminForm
+
+
+class ClientInline(admin.TabularInline):
+
+    model = Client
+    fields = (
+        'first_name',
+        'last_name',
+    )
+    extra = 0
+    verbose_name = _('Member')
+    verbose_name_plural = _('Members')
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
+class FamilyAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    search_fields = ('name',)
+    inlines = (ClientInline,)
 
 
 admin.site.register(User, LocalUserAdmin)
 admin.site.register(Company, CompanyAdmin)
+admin.site.register(Client, ClientAdmin)
+admin.site.register(Family, FamilyAdmin)
 
 # Change admin site title
 admin.site.site_header = _("courseDB Administration")
