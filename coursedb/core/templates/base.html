@@ -12,6 +12,15 @@
         </title>
         <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" crossorigin="anonymous">
         <link href="{% static 'css/bootstrap-icons.min.css' %}" rel="stylesheet" crossorigin="anonymous">
+        <script type="text/javascript">
+            function changeLang(element) {
+                const lang = element.id;
+                const input = document.getElementById("lang-sel-hidden");
+                input.value = lang;
+                const form = document.getElementById("lang-sel-form");
+                form.submit();
+            }
+        </script>
         {% block add_to_header %}{% endblock %}
     </head>
     <body>
@@ -19,11 +28,32 @@
         {% block main_content %}{% endblock %}
 
         <footer>
-            <nav class="navbar fixed-bottom bg-body-tertiary">
-                <div class="container-fluid">
-                    {% translate 'courseDB' %}
-                </div>
-            </nav>
+
+            <form action="{% url 'set_language' %}" method="post" id="lang-sel-form">
+                {% csrf_token %}
+                <nav class="navbar fixed-bottom bg-body-tertiary">
+                    <div class="container-fluid">
+                        <a class="navbar-brand" href="{% url 'core.index' %}">{% translate 'courseDB' %}</a>
+                        <ul class="nav">
+                            {% get_language_info_list for LANGUAGES as languages %}
+                            {% for language in languages %}
+                            <li class="nav-item ms-3">
+                                <a {% if language.code == LANGUAGE_CODE %}class="fw-bold"{% endif %}
+                                       id="{{ language.code }}" href="#" title="{{ language.name_local }}"
+                                        class="lang-sel-item" onclick="changeLang(this); return false;">
+                                    {{ language.code|upper }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                            <input id="lang-sel-hidden" name="language" type="hidden" value="{{ LANGUAGE_CODE }}"/>
+                    </div>
+                </nav>
+                <nav class="language-switcher">
+                    <ul class="list-unstyled mb-0 d-flex">
+                    </ul>
+                </nav>
+            </form>
         </footer>
 
         <script src="{% static 'js/bootstrap.bundle.min.js' %}"
