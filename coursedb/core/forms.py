@@ -5,6 +5,25 @@ from django_countries.widgets import CountrySelectWidget
 from phonenumber_field.formfields import SplitPhoneNumberField
 
 from core.models import User, Company, Client
+from core.fields import BootstrapSplitPhoneNumberField
+
+
+class ClientForm(forms.ModelForm):
+
+    phone = BootstrapSplitPhoneNumberField(
+        required=False,
+    )
+
+    class Meta:
+        model = Client
+        fields = ['gender', 'prefixed_title', 'first_name',
+                  'last_name', 'postfixed_title', 'job_title',
+                  'letter_salutation', 'street', 'zipcode',
+                  'city', 'country', 'email', 'phone', 'job',
+                  'additional_info']
+        widgets = {
+            'country': CountrySelectWidget(),
+        }
 
 
 class CompanyAdminForm(forms.ModelForm):

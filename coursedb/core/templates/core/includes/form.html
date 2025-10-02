@@ -1,0 +1,45 @@
+{% load i18n %}
+{% load widget_tweaks %}
+
+{% block add_to_header %}
+    {{ form.media }}
+{% endblock %}
+
+<div class="row">
+    <div class="col-md-11 col-lg-7">
+        <form method="POST" action="{{ action }}">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+            {% for field in form %}
+                <div class="mb-3{% if field.errors %} has-validation{% endif %}">
+                    {{ field.label_tag }}
+                    {% if field.widget_type == 'select' or field.widget_type == 'countryselect' %}
+                        {{ field|add_class:"form-select" }}
+                    {% elif field.widget_type == 'phonenumberprefix' %}
+                        <div>
+                            {{ field }}
+                        </div>
+
+                    {% else %}
+                        {{ field|attr:"class:form-control" }}
+                    {% endif %}
+                    {% if field.errors %}
+                        <div class="alert error alert-danger">
+                            {% for error in field.errors %}
+                            {{ error|escape }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <input type="submit" class="btn btn-success" value="{% trans 'Save' %}">
+            <a class="btn btn-danger" href="{{ cancel }}">{% trans 'Cancel' %}</a>
+        </form>
+
+
+    </div>
+</div>

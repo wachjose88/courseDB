@@ -1,0 +1,46 @@
+{% extends 'core/base.html' %}
+{% load i18n %}
+
+{% block title %}
+    {% translate 'List :: Clients' %}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    <li class="breadcrumb-item"><a href="{% url 'core.client.list' %}">
+        {% translate 'Client' %}
+    </a></li>
+    <li class="breadcrumb-item active" aria-current="page">
+        {% translate 'List' %}
+    </li>
+{% endblock %}
+
+{% block content %}
+    <h1>{% translate 'Clients' %}</h1>
+
+    <a href="{% url 'core.client.create' %}" class="btn btn-outline-success">
+        <i class="bi bi-pencil"></i> {% translate 'Create new client' %}
+    </a>
+
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>{% translate 'Name' %}</th>
+                <th>{% translate 'Actions' %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for client in clients %}
+                <tr>
+                    <td>{{ client.name }}</td>
+                    <td>
+                        <a href="{% url 'core.client.edit' client_id=client.id %}"
+                                class="btn btn-outline-success btn-sm">
+                            <i class="bi bi-pencil"></i> {% translate 'Edit' %}
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

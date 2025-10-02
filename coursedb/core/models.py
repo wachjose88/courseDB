@@ -177,6 +177,13 @@ class Client(AddressMixin, EMailMixin, PhoneMixin):
         verbose_name=_('Family')
     )
 
+    company = models.ForeignKey(
+        Company,
+        related_name='clients',
+        on_delete=models.CASCADE,
+        verbose_name=_('Company')
+    )
+
     def name(self):
         return f'{self.first_name} {self.last_name}'
 

@@ -1,0 +1,40 @@
+{% extends 'core/base.html' %}
+{% load i18n %}
+
+{% block title %}
+    {% if client %}
+        {% translate 'Edit :: Clients' %}
+    {% else %}
+        {% translate 'Create :: Clients' %}
+    {% endif %}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    <li class="breadcrumb-item"><a href="{% url 'core.client.list' %}">
+        {% translate 'Client' %}
+    </a></li>
+    {% if client %}
+        <li class="breadcrumb-item active" aria-current="page">
+            {% translate 'Edit' %}: {{ client.name }}
+        </li>
+    {% else %}
+        <li class="breadcrumb-item active" aria-current="page">
+            {% translate 'Create' %}
+        </li>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% if client %}
+        <h1>{% translate 'Edit' %}: {{ client.name }}</h1>
+        {% url 'core.client.edit' client_id=client.id as action %}
+    {% else %}
+        <h1>{% translate 'Create client' %}</h1>
+        {% url 'core.client.create' as action %}
+    {% endif %}
+    {% url 'core.client.list' as cancel %}
+
+    {% include 'core/includes/form.html' with form=form action=action cancel=cancel %}
+
+{% endblock %}
