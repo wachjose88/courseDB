@@ -27,7 +27,9 @@ def client_create_edit(request, client_id=None):
         else:
             form = ClientForm(request.POST)
         if form.is_valid():
-            form.save()
+            client_saved = form.save(commit=False)
+            client_saved.company = request.user.company
+            client_saved.save()
             if client_id is not None:
                 messages.success(request, _('Client edited successfully'))
             else:
@@ -43,3 +45,11 @@ def client_create_edit(request, client_id=None):
         'client': client,
     }
     return render(request, 'core/clients/create_edit.html', params)
+
+
+@login_required
+def client_delete(request, client_id):
+    client = get_object_or_404(Client, pk=client_id)
+    client.delete()
+    messages.success(request, _('Client deleted successfully'))
+    return redirect('core.client.list')

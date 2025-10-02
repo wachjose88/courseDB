@@ -38,6 +38,11 @@
                                 class="btn btn-outline-success btn-sm">
                             <i class="bi bi-pencil"></i> {% translate 'Edit' %}
                         </a>
+                        <a href="{% url 'core.client.delete' client_id=client.id %}"
+                                class="btn btn-outline-danger btn-sm"
+                                onclick="return confirm('{% translate 'Are you sure you want to delete this client?' %}')">
+                            <i class="bi bi-trash"></i> {% translate 'Delete' %}
+                        </a>
                     </td>
                 </tr>
             {% endfor %}

@@ -10,6 +10,8 @@ urlpatterns = [
          name='core.client.create'),
     path('client/<int:client_id>/edit', clients.client_create_edit,
          name='core.client.edit'),
+    path('client/<int:client_id>/delete', clients.client_delete,
+         name='core.client.delete'),
 
     path("login/", av.LoginView.as_view(), name="login"),
     path("logout/", av.LogoutView.as_view(), name="logout"),
