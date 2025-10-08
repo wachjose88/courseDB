@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.translation import gettext as _
 
@@ -10,6 +11,9 @@ from forms import ClientForm
 @login_required
 def client_list(request):
     clients = request.user.company.clients.all()
+    paginator = Paginator(clients, 10)
+    page = request.GET.get('page')
+    clients = paginator.get_page(page)
     params = {
         'clients': clients,
     }
@@ -52,4 +56,16 @@ def client_delete(request, client_id):
     client = get_object_or_404(Client, pk=client_id)
     client.delete()
     messages.success(request, _('Client deleted successfully'))
+    return redirect('core.client.list')
+
+
+@login_required
+def client_copy(request, client_id):
+    client = get_object_or_404(Client, pk=client_id)
+    client.pk = None
+    client.id = None
+    client.last_name = client.last_name + _(' (copy)')
+    client._state.adding = True
+    client.save()
+    messages.success(request, _('Client copied successfully'))
     return redirect('core.client.list')

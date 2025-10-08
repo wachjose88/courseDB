@@ -12,6 +12,8 @@ urlpatterns = [
          name='core.client.edit'),
     path('client/<int:client_id>/delete', clients.client_delete,
          name='core.client.delete'),
+    path('client/<int:client_id>/copy', clients.client_copy,
+         name='core.client.copy'),
 
     path("login/", av.LoginView.as_view(), name="login"),
     path("logout/", av.LogoutView.as_view(), name="logout"),

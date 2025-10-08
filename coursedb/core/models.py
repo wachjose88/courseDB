@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AbstractUser, PermissionsMixin
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.db import models
 from django_countries.fields import CountryField
@@ -52,7 +53,18 @@ class PhoneMixin(models.Model):
         abstract = True
 
 
-class Company(AddressMixin, EMailMixin, PhoneMixin):
+class CreatedAtMixin(models.Model):
+
+    created_at = models.DateTimeField(
+        default=timezone.now,
+        verbose_name=_('E-mail')
+    )
+
+    class Meta:
+        abstract = True
+
+
+class Company(AddressMixin, EMailMixin, PhoneMixin, CreatedAtMixin):
 
     name = models.CharField(
         max_length=128,
@@ -104,7 +116,7 @@ class Family(models.Model):
         verbose_name_plural = _('Families')
 
 
-class Client(AddressMixin, EMailMixin, PhoneMixin):
+class Client(AddressMixin, EMailMixin, PhoneMixin, CreatedAtMixin):
 
     GENDER_MALE = 'm'
     GENDER_FEMALE = 'f'
