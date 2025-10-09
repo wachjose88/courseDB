@@ -57,7 +57,7 @@ class CreatedAtMixin(models.Model):
 
     created_at = models.DateTimeField(
         default=timezone.now,
-        verbose_name=_('E-mail')
+        verbose_name=_('Created at')
     )
 
     class Meta:
@@ -196,6 +196,11 @@ class Client(AddressMixin, EMailMixin, PhoneMixin, CreatedAtMixin):
         verbose_name=_('Company')
     )
 
+    is_instructor = models.BooleanField(
+        default=False,
+        verbose_name=_('Is instructor')
+    )
+
     def name(self):
         return f'{self.first_name} {self.last_name}'
 
@@ -207,3 +212,43 @@ class Client(AddressMixin, EMailMixin, PhoneMixin, CreatedAtMixin):
         verbose_name = _('Client')
         verbose_name_plural = _('Clients')
 
+
+class CourseDescription(CreatedAtMixin):
+
+    title = models.CharField(
+        max_length=128,
+        verbose_name=_('Title')
+    )
+
+    short_description = HTMLField(
+        blank=True,
+        verbose_name=_('Short description')
+    )
+
+    long_description = HTMLField(
+        blank=True,
+        verbose_name=_('Long description')
+    )
+
+    units = models.IntegerField(
+        verbose_name=_('Units')
+    )
+
+    duration = models.DurationField(
+        verbose_name=_('Duration')
+    )
+
+    company = models.ForeignKey(
+        Company,
+        related_name='course_descriptions',
+        on_delete=models.CASCADE,
+        verbose_name=_('Company')
+    )
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        abstract = False
+        verbose_name = _('Course description')
+        verbose_name_plural = _('Course descriptions')

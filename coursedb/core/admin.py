@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
 
 from core.forms import UserAdminForm, CompanyAdminForm, ClientAdminForm
-from core.models import User, Company, Client, Family
+from core.models import User, Company, Client, Family, CourseDescription
 
 
 class LocalUserAdmin(UserAdmin):
@@ -58,10 +58,10 @@ class ClientAdmin(admin.ModelAdmin):
     fields = ('gender', 'letter_salutation', 'prefixed_title', 'first_name',
               'last_name', 'postfixed_title', 'job_title',
               'street', 'zipcode', 'city', 'country', 'email', 'phone', 'job',
-              'additional_info', 'family')
-    list_display = ('name',)
+              'additional_info', 'family', 'is_instructor')
+    list_display = ('name', 'is_instructor')
     search_fields = ('first_name', 'last_name')
-    list_filter = ('country',)
+    list_filter = ('is_instructor', 'country')
     form = ClientAdminForm
 
 
@@ -92,10 +92,16 @@ class FamilyAdmin(admin.ModelAdmin):
     inlines = (ClientInline,)
 
 
+class CourseDescriptionAdmin(admin.ModelAdmin):
+    list_display = ('title',)
+    search_fields = ('title',)
+
+
 admin.site.register(User, LocalUserAdmin)
 admin.site.register(Company, CompanyAdmin)
 admin.site.register(Client, ClientAdmin)
 admin.site.register(Family, FamilyAdmin)
+admin.site.register(CourseDescription, CourseDescriptionAdmin)  
 
 # Change admin site title
 admin.site.site_header = _("courseDB Administration")

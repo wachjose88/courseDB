@@ -4,8 +4,15 @@ from django.contrib.auth.forms import UserChangeForm
 from django_countries.widgets import CountrySelectWidget
 from phonenumber_field.formfields import SplitPhoneNumberField
 
-from core.models import User, Company, Client
+from core.models import User, Company, Client, CourseDescription
 from core.fields import BootstrapSplitPhoneNumberField
+
+
+class CourseDescriptionForm(forms.ModelForm):
+
+    class Meta:
+        model = CourseDescription
+        exclude = ('created_at', 'company')
 
 
 class ClientForm(forms.ModelForm):

@@ -1,0 +1,43 @@
+{% extends 'core/base.html' %}
+{% load i18n %}
+
+{% block title %}
+    {% if description %}
+        {% translate 'Edit :: Description :: Course' %}
+    {% else %}
+        {% translate 'Create :: Description :: Course' %}
+    {% endif %}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    <li class="breadcrumb-item"><a href="{# url 'core.client.list' #}">
+        {% translate 'Course' %}
+    </a></li>
+    <li class="breadcrumb-item"><a href="{% url 'core.course.description.list' %}">
+        {% translate 'Description' %}
+    </a></li>
+    {% if description %}
+        <li class="breadcrumb-item active" aria-current="page">
+            {% translate 'Edit' %}: {{ description.title }}
+        </li>
+    {% else %}
+        <li class="breadcrumb-item active" aria-current="page">
+            {% translate 'Create' %}
+        </li>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% if description %}
+        <h1>{% translate 'Edit' %}: {{ description.title }}</h1>
+        {% url 'core.course.description.edit' description_id=description.id as action %}
+    {% else %}
+        <h1>{% translate 'Create course description' %}</h1>
+        {% url 'core.course.description.create' as action %}
+    {% endif %}
+    {% url 'core.course.description.list' as cancel %}
+
+    {% include 'core/includes/form.html' with form=form action=action cancel=cancel %}
+
+{% endblock %}

@@ -11,7 +11,8 @@ from forms import ClientForm
 
 @login_required
 def client_list(request):
-    clients = request.user.company.clients.all().order_by('last_name', 'first_name')
+    clients = request.user.company.clients.filter(is_instructor=False).order_by(
+        'last_name', 'first_name')
     paginator = Paginator(clients, settings.PAGINATOR_NUM_PER_PAGE)
     page = request.GET.get('page')
     clients = paginator.get_page(page)
