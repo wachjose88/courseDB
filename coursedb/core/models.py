@@ -252,3 +252,62 @@ class CourseDescription(CreatedAtMixin):
         abstract = False
         verbose_name = _('Course description')
         verbose_name_plural = _('Course descriptions')
+
+
+class Course(CreatedAtMixin):
+
+    title_extension = models.CharField(
+        max_length=128,
+        blank=True,
+        null=True,
+        verbose_name=_('Title extension')
+    )
+
+    additional_description = HTMLField(
+        blank=True,
+        verbose_name=_('Additional description')
+    )
+
+    description = models.ForeignKey(
+        CourseDescription,
+        related_name='courses',
+        on_delete=models.CASCADE,
+        verbose_name=_('Description')
+    )
+
+    def __str__(self):
+        if self.title_extension is None:
+            return self.description.title
+        return f'{self.description.title} {self.title_extension}'
+
+    class Meta:
+        abstract = False
+        verbose_name = _('Course')
+        verbose_name_plural = _('Courses')
+
+
+class CourseUnit(models.Model):
+
+    begin = models.DateTimeField(
+        default=timezone.now,
+        verbose_name=_('Begin')
+    )
+
+    duration = models.DurationField(
+        verbose_name=_('Duration')
+    )
+
+    course = models.ForeignKey(
+        Course,
+        related_name='units',
+        on_delete=models.CASCADE,
+        verbose_name=_('Course')
+    )
+
+    def __str__(self):
+        return self.begin
+
+    class Meta:
+        abstract = False
+        verbose_name = _('Course unit')
+        verbose_name_plural = _('Course units')

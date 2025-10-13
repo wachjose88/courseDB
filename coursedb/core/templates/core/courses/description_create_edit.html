@@ -11,7 +11,7 @@
 
 {% block breadcrumb %}
     {{ block.super }}
-    <li class="breadcrumb-item"><a href="{# url 'core.client.list' #}">
+    <li class="breadcrumb-item"><a href="{% url 'core.course.list' %}">
         {% translate 'Course' %}
     </a></li>
     <li class="breadcrumb-item"><a href="{% url 'core.course.description.list' %}">

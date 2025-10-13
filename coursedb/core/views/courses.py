@@ -6,7 +6,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.translation import gettext as _
 
 from core.forms import CourseDescriptionForm
-from core.models import CourseDescription
+from core.models import CourseDescription, Course
 
 
 @login_required
@@ -25,7 +25,9 @@ def course_description_list(request):
 def course_description_create_edit(request, description_id=None):
     description = None
     if description_id is not None:
-        description = get_object_or_404(CourseDescription, pk=description_id)
+        description = get_object_or_404(CourseDescription,
+                                        pk=description_id,
+                                        company=request.user.company)
     if request.method == 'POST':
         if description_id is not None:
             form = CourseDescriptionForm(request.POST, instance=description)
@@ -54,7 +56,9 @@ def course_description_create_edit(request, description_id=None):
 
 @login_required
 def course_description_delete(request, description_id):
-    description = get_object_or_404(CourseDescription, pk=description_id)
+    description = get_object_or_404(CourseDescription,
+                                    pk=description_id,
+                                    company=request.user.company)
     description.delete()
     messages.success(request, _('Course description deleted successfully'))
     return redirect('core.course.description.list')
@@ -62,7 +66,9 @@ def course_description_delete(request, description_id):
 
 @login_required
 def course_description_copy(request, description_id):
-    description = get_object_or_404(CourseDescription, pk=description_id)
+    description = get_object_or_404(CourseDescription,
+                                    pk=description_id,
+                                    company=request.user.company)
     description.pk = None
     description.id = None
     description.title = description.title + _(' (copy)')
@@ -70,3 +76,17 @@ def course_description_copy(request, description_id):
     description.save()
     messages.success(request, _('Course description copied successfully'))
     return redirect('core.course.description.list')
+
+
+@login_required
+def course_list(request):
+    courses = Course.objects.filter(
+        description__company=request.user.company,
+    ).distinct().order_by('-created_at')
+    paginator = Paginator(courses, settings.PAGINATOR_NUM_PER_PAGE)
+    page = request.GET.get('page')
+    courses = paginator.get_page(page)
+    params = {
+        'courses': courses,
+    }
+    return render(request, 'core/courses/list.html', params)

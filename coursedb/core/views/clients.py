@@ -26,7 +26,7 @@ def client_list(request):
 def client_create_edit(request, client_id=None):
     client = None
     if client_id is not None:
-        client = get_object_or_404(Client, pk=client_id)
+        client = get_object_or_404(Client, pk=client_id, company=request.user.company)
     if request.method == 'POST':
         if client_id is not None:
             form = ClientForm(request.POST, instance=client)
@@ -55,7 +55,7 @@ def client_create_edit(request, client_id=None):
 
 @login_required
 def client_delete(request, client_id):
-    client = get_object_or_404(Client, pk=client_id)
+    client = get_object_or_404(Client, pk=client_id, company=request.user.company)
     client.delete()
     messages.success(request, _('Client deleted successfully'))
     return redirect('core.client.list')
@@ -63,7 +63,7 @@ def client_delete(request, client_id):
 
 @login_required
 def client_copy(request, client_id):
-    client = get_object_or_404(Client, pk=client_id)
+    client = get_object_or_404(Client, pk=client_id, company=request.user.company)
     client.pk = None
     client.id = None
     client.last_name = client.last_name + _(' (copy)')

@@ -26,6 +26,9 @@ urlpatterns = [
     path('course/description/<int:description_id>/copy', courses.course_description_copy,
          name='core.course.description.copy'),
 
+    path('course/list', courses.course_list,
+         name='core.course.list'),
+
     path("login/", av.LoginView.as_view(), name="login"),
     path("logout/", av.LogoutView.as_view(), name="logout"),
 ]

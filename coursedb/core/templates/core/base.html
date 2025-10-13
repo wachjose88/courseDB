@@ -23,12 +23,16 @@
                                 {% translate 'Clients' %}
                             </a>
                         </li>
-                        <li class="nav-item dropdown active">
-                            <a class="nav-link dropdown-toggle" href="#" role="button"
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle active" href="#"
+                               role="button"
                                data-bs-toggle="dropdown" aria-expanded="false">
                                 {% translate 'Courses' %}
                             </a>
                             <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'core.course.list' %}">
+                                    {% translate 'Courses' %}
+                                </a></li>
                                 <li><a class="dropdown-item" href="{% url 'core.course.description.list' %}">
                                     {% translate 'Course descriptions' %}
                                 </a></li>
