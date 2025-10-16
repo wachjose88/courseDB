@@ -275,6 +275,12 @@ class Course(CreatedAtMixin):
         verbose_name=_('Description')
     )
 
+    instructors = models.ManyToManyField(
+        Client,
+        related_name='given_courses',
+        verbose_name=_('Instructors')
+    )
+
     def __str__(self):
         if self.title_extension is None:
             return self.description.title
@@ -305,7 +311,7 @@ class CourseUnit(models.Model):
     )
 
     def __str__(self):
-        return self.begin
+        return f'{self.begin}'
 
     class Meta:
         abstract = False

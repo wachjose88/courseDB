@@ -2,10 +2,42 @@
 from django import forms
 from django.contrib.auth.forms import UserChangeForm
 from django_countries.widgets import CountrySelectWidget
+from django.utils.translation import gettext_lazy as _
 from phonenumber_field.formfields import SplitPhoneNumberField
 
-from core.models import User, Company, Client, CourseDescription
+from core.models import User, Company, Client, CourseDescription, Course
 from core.fields import BootstrapSplitPhoneNumberField
+
+
+class CourseCreateForm(forms.ModelForm):
+
+    begin = forms.DateTimeField(
+        widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+        label=_('Begin'),
+    )
+
+    def __init__(self, *args, **kwargs):
+        company = kwargs.pop('company')
+        super(CourseCreateForm, self).__init__(*args, **kwargs)
+        self.fields['instructors'].queryset = Client.objects.filter(
+            is_instructor=True,
+            company=company
+        )
+
+    class Meta:
+        model = Course
+        exclude = ('created_at',)
+
+
+class CourseAdminForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(CourseAdminForm, self).__init__(*args, **kwargs)
+        self.fields['instructors'].queryset = Client.objects.filter(is_instructor=True)
+
+    class Meta:
+        model = Course
+        exclude = ('created_at',)
 
 
 class CourseDescriptionForm(forms.ModelForm):

@@ -21,11 +21,9 @@
         ({{ courses.number }}/{{ courses.paginator.num_pages }})
     </h1>
 
-{% comment %}
-    <a href="{% url 'core.course.description.create' %}" class="btn btn-outline-success">
-        <i class="bi bi-pencil"></i> {% translate 'Create new course description' %}
+    <a href="{% url 'core.course.create' %}" class="btn btn-outline-success">
+        <i class="bi bi-pencil"></i> {% translate 'Create new course' %}
     </a>
-{% endcomment %}
     <a href="{% url 'core.course.description.list' %}" class="btn btn-outline-primary">
         <i class="bi bi-list-nested"></i> {% translate 'Course descriptions' %}
     </a>

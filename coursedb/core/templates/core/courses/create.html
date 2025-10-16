@@ -1,0 +1,25 @@
+{% extends 'core/base.html' %}
+{% load i18n %}
+
+{% block title %}
+    {% translate 'Create :: Course' %}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    <li class="breadcrumb-item"><a href="{% url 'core.course.list' %}">
+        {% translate 'Course' %}
+    </a></li>
+    <li class="breadcrumb-item active" aria-current="page">
+        {% translate 'Create' %}
+    </li>
+{% endblock %}
+
+{% block content %}
+    <h1>{% translate 'Create course' %}</h1>
+    {% url 'core.course.create' as action %}
+    {% url 'core.course.list' as cancel %}
+
+    {% include 'core/includes/form.html' with form=form action=action cancel=cancel %}
+
+{% endblock %}

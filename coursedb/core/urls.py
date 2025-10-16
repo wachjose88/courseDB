@@ -28,6 +28,8 @@ urlpatterns = [
 
     path('course/list', courses.course_list,
          name='core.course.list'),
+    path('course/create', courses.course_create,
+         name='core.course.create'),
 
     path("login/", av.LoginView.as_view(), name="login"),
     path("logout/", av.LogoutView.as_view(), name="logout"),

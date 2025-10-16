@@ -1,11 +1,14 @@
+from datetime import timedelta
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404, redirect
+from django.utils import timezone
 from django.utils.translation import gettext as _
 
-from core.forms import CourseDescriptionForm
+from core.forms import CourseDescriptionForm, CourseCreateForm
 from core.models import CourseDescription, Course
 
 
@@ -90,3 +93,23 @@ def course_list(request):
         'courses': courses,
     }
     return render(request, 'core/courses/list.html', params)
+
+
+@login_required
+def course_create(request):
+    if request.method == 'POST':
+        form = CourseCreateForm(request.POST, company=request.user.company)
+        if form.is_valid():
+            course = form.save()
+            for i in range(0, course.description.units):
+                add = timedelta(weeks=i)
+                begin = form.cleaned_data['begin'] + add
+                course.units.create(begin=begin, duration=course.description.duration)
+            messages.success(request, _('Course created successfully'))
+            return redirect('core.course.list')
+    else:
+        form = CourseCreateForm(company=request.user.company)
+    params = {
+        'form': form,
+    }
+    return render(request, 'core/courses/create.html', params)

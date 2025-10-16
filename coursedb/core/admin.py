@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
 
-from core.forms import UserAdminForm, CompanyAdminForm, ClientAdminForm
+from core.forms import UserAdminForm, CompanyAdminForm, ClientAdminForm, CourseAdminForm
 from core.models import User, Company, Client, Family, CourseDescription, CourseUnit, Course
 
 
@@ -113,6 +113,7 @@ class CourseAdmin(admin.ModelAdmin):
     list_display = ('__str__',)
     search_fields = ('description__title', 'title_extension')
     inlines = (CourseUnitInline,)
+    form = CourseAdminForm
 
 
 admin.site.register(User, LocalUserAdmin)
