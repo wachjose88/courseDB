@@ -30,6 +30,8 @@ urlpatterns = [
          name='core.course.list'),
     path('course/create', courses.course_create,
          name='core.course.create'),
+    path('course/<int:course_id>', courses.course_details,
+         name='core.course.details'),
 
     path("login/", av.LoginView.as_view(), name="login"),
     path("logout/", av.LogoutView.as_view(), name="logout"),

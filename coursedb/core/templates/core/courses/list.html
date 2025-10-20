@@ -1,5 +1,6 @@
 {% extends 'core/base.html' %}
 {% load i18n %}
+{% load humanize %}
 
 {% block title %}
     {% translate 'List :: Course' %}
@@ -32,14 +33,26 @@
         <thead>
             <tr>
                 <th>{% translate 'Title' %}</th>
+                <th>{% translate 'Begin' %}</th>
+                <th>{% translate 'Units' %}</th>
                 <th>{% translate 'Actions' %}</th>
             </tr>
         </thead>
         <tbody>
             {% for course in courses %}
                 <tr>
-                    <td>{{ course }}</td>
                     <td>
+                        <a href="{% url 'core.course.details' course_id=course.id %}">
+                            {{ course }}
+                        </a>
+                    </td>
+                    <td>{{ course.begin|date:'DATETIME_FORMAT' }}</td>
+                    <td>{{ course.units.count }}</td>
+                    <td>
+                        <a href="{% url 'core.course.details' course_id=course.id %}"
+                                class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-info-circle"></i> {% translate 'Details' %}
+                        </a>
                         {% comment %}
                         <a href="{% url 'core.course.description.edit' description_id=description.id %}"
                                 class="btn btn-outline-success btn-sm">

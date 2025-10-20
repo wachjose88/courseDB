@@ -281,6 +281,15 @@ class Course(CreatedAtMixin):
         verbose_name=_('Instructors')
     )
 
+    def all_units(self):
+        return self.units.all().order_by('begin')
+
+    def begin(self):
+        begin = self.units.all().order_by('begin').first()
+        if begin is None:
+            return ''
+        return begin.begin
+
     def __str__(self):
         if self.title_extension is None:
             return self.description.title

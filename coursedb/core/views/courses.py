@@ -113,3 +113,13 @@ def course_create(request):
         'form': form,
     }
     return render(request, 'core/courses/create.html', params)
+
+
+@login_required
+def course_details(request, course_id):
+    course = get_object_or_404(Course, id=course_id,
+                               description__company=request.user.company)
+    params = {
+        'course': course,
+    }
+    return render(request, 'core/courses/details.html', params)
