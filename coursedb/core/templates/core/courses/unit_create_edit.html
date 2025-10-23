@@ -1,0 +1,44 @@
+{% extends 'core/base.html' %}
+{% load i18n %}
+
+{% block title %}
+    {% if unit %}
+        {% translate 'Edit :: Unit ::' %}
+    {% else %}
+        {% translate 'Create :: Unit ::' %}
+    {% endif %}
+    {{ course }} :: {% translate 'Course' %}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    <li class="breadcrumb-item"><a href="{% url 'core.course.list' %}">
+        {% translate 'Course' %}
+    </a></li>
+    <li class="breadcrumb-item"><a href="{% url 'core.course.details' course_id=course.id %}">
+        {{ course }}
+    </a></li>
+    {% if unit %}
+        <li class="breadcrumb-item active" aria-current="page">
+            {% translate 'Edit unit' %}
+        </li>
+    {% else %}
+        <li class="breadcrumb-item active" aria-current="page">
+            {% translate 'Create unit' %}
+        </li>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% if unit %}
+        <h1>{% translate 'Edit unit' %}</h1>
+        {% url 'core.course.unit.edit' course_id=course.id unit_id=unit.id as action %}
+    {% else %}
+        <h1>{% translate 'Create unit' %}</h1>
+        {% url 'core.course.unit.create' course_id=course.id as action %}
+    {% endif %}
+    {% url 'core.course.details' course_id=course.id as cancel %}
+
+    {% include 'core/includes/form.html' with form=form action=action cancel=cancel %}
+
+{% endblock %}

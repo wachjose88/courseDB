@@ -9,6 +9,18 @@ from core.models import User, Company, Client, CourseDescription, Course
 from core.fields import BootstrapSplitPhoneNumberField
 
 
+class CourseUnitForm(forms.Form):
+
+    begin = forms.DateTimeField(
+        widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+        label=_('Begin'),
+    )
+
+    duration = forms.DurationField(
+        label=_('Duration')
+    )
+
+
 class CourseCreateForm(forms.ModelForm):
 
     begin = forms.DateTimeField(
@@ -19,6 +31,21 @@ class CourseCreateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         company = kwargs.pop('company')
         super(CourseCreateForm, self).__init__(*args, **kwargs)
+        self.fields['instructors'].queryset = Client.objects.filter(
+            is_instructor=True,
+            company=company
+        )
+
+    class Meta:
+        model = Course
+        exclude = ('created_at',)
+
+
+class CourseEditForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        company = kwargs.pop('company')
+        super(CourseEditForm, self).__init__(*args, **kwargs)
         self.fields['instructors'].queryset = Client.objects.filter(
             is_instructor=True,
             company=company

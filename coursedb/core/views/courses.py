@@ -8,8 +8,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.utils.translation import gettext as _
 
-from core.forms import CourseDescriptionForm, CourseCreateForm
-from core.models import CourseDescription, Course
+from core.forms import CourseDescriptionForm, CourseCreateForm, CourseUnitForm, CourseEditForm
+from core.models import CourseDescription, Course, CourseUnit
 
 
 @login_required
@@ -116,6 +116,24 @@ def course_create(request):
 
 
 @login_required
+def course_edit(request, course_id):
+    course = get_object_or_404(Course, id=course_id, description__company=request.user.company)
+    if request.method == 'POST':
+        form = CourseEditForm(request.POST, instance=course, company=request.user.company)
+        if form.is_valid():
+            form.save()
+            messages.success(request, _('Course edited successfully'))
+            return redirect('core.course.details', course_id=course.id)
+    else:
+        form = CourseEditForm(instance=course, company=request.user.company)
+    params = {
+        'form': form,
+        'course': course,
+    }
+    return render(request, 'core/courses/edit.html', params)
+
+
+@login_required
 def course_details(request, course_id):
     course = get_object_or_404(Course, id=course_id,
                                description__company=request.user.company)
@@ -123,3 +141,66 @@ def course_details(request, course_id):
         'course': course,
     }
     return render(request, 'core/courses/details.html', params)
+
+
+@login_required
+def course_delete(request, course_id):
+    course = get_object_or_404(Course, id=course_id,
+                               description__company=request.user.company)
+    course.delete()
+    messages.success(request, _('Course deleted successfully'))
+    return redirect('core.course.list')
+
+
+@login_required
+def unit_delete(request, course_id, unit_id):
+    unit = get_object_or_404(CourseUnit, id=unit_id, course__id=course_id,
+                             course__description__company=request.user.company)
+    unit.delete()
+    messages.success(request, _('Course unit deleted successfully'))
+    return redirect('core.course.details', course_id=unit.course.id)
+
+
+@login_required
+def unit_create_edit(request, course_id, unit_id=None):
+    course = get_object_or_404(Course, id=course_id, description__company=request.user.company)
+    unit = None
+    data = None
+    if unit_id is not None:
+        unit = get_object_or_404(CourseUnit, id=unit_id, course__id=course_id,
+                                 course__description__company=request.user.company)
+        begin = unit.begin
+        data = {
+            'begin': f'{begin:%Y-%m-%d %H:%M}',
+            'duration': unit.duration,
+        }
+    if request.method == 'POST':
+        if unit_id is not None:
+            form = CourseUnitForm(request.POST, initial=data)
+        else:
+            form = CourseUnitForm(request.POST)
+        if form.is_valid():
+            if unit_id is not None:
+                unit.begin = form.cleaned_data['begin']
+                unit.duration = form.cleaned_data['duration']
+                unit.save()
+                messages.success(request, _('Course unit edited successfully'))
+            else:
+                CourseUnit.objects.create(
+                    begin=form.cleaned_data['begin'],
+                    duration=form.cleaned_data['duration'],
+                    course=course,
+                )
+                messages.success(request, _('Course unit created successfully'))
+            return redirect('core.course.details', course_id=course.id)
+    else:
+        if unit_id is not None:
+            form = CourseUnitForm(initial=data)
+        else:
+            form = CourseUnitForm()
+    params = {
+        'form': form,
+        'unit': unit,
+        'course': course,
+    }
+    return render(request, 'core/courses/unit_create_edit.html', params)
