@@ -71,6 +71,12 @@ class Company(AddressMixin, EMailMixin, PhoneMixin, CreatedAtMixin):
         verbose_name=_('Name')
     )
 
+    currency = models.CharField(
+        max_length=3,
+        default='EUR',
+        verbose_name=_('Currency')
+    )
+
     def __str__(self):
         return self.name
 
@@ -243,6 +249,12 @@ class CourseDescription(CreatedAtMixin):
         verbose_name=_('Repeat interval')
     )
 
+    standard_costs = models.DecimalField(
+        decimal_places=2,
+        max_digits=10,
+        verbose_name=_('Standard costs')
+    )
+
     company = models.ForeignKey(
         Company,
         related_name='course_descriptions',
@@ -278,6 +290,12 @@ class Course(CreatedAtMixin):
         related_name='courses',
         on_delete=models.CASCADE,
         verbose_name=_('Description')
+    )
+
+    actual_costs = models.DecimalField(
+        decimal_places=2,
+        max_digits=10,
+        verbose_name=_('Actual costs')
     )
 
     instructors = models.ManyToManyField(

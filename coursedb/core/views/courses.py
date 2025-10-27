@@ -100,13 +100,20 @@ def course_create(request):
     if request.method == 'POST':
         form = CourseCreateForm(request.POST, company=request.user.company)
         if form.is_valid():
-            course = form.save()
+            set_standard_costs = False
+            actual_costs = form.cleaned_data['actual_costs']
+            if not actual_costs:
+                set_standard_costs = True
+            course = form.save(commit=False)
+            if set_standard_costs:
+                course.actual_costs = course.description.standard_costs
+            course.save()
             for i in range(0, course.description.units):
                 add = timedelta(days=course.description.repeat_interval*i)
                 begin = form.cleaned_data['begin'] + add
                 course.units.create(begin=begin, duration=course.description.duration)
             messages.success(request, _('Course created successfully'))
-            return redirect('core.course.list')
+            return redirect('core.course.details', course_id=course.id)
     else:
         form = CourseCreateForm(company=request.user.company)
     params = {

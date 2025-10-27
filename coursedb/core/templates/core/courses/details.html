@@ -42,6 +42,8 @@
                     {{ course.description.long_description|safe }}
                     <h6 class="card-subtitle mb-2 text-body-secondary">{% translate 'Additional' %}</h6>
                     {{ course.additional_description|safe }}
+                    <h5 class="card-title">{% translate 'Costs' %}</h5>
+                    <p>{{ request.user.company.currency }} {{ course.actual_costs }}</p>
                     <h5 class="card-title">{% translate 'Instructor' %}</h5>
                     <ul>
                         {% for instructor in course.instructors.all %}

@@ -35,6 +35,7 @@ class CourseCreateForm(forms.ModelForm):
             is_instructor=True,
             company=company
         )
+        self.fields['actual_costs'].required = False
 
     class Meta:
         model = Course
