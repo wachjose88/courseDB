@@ -102,7 +102,7 @@ def course_create(request):
         if form.is_valid():
             course = form.save()
             for i in range(0, course.description.units):
-                add = timedelta(weeks=i)
+                add = timedelta(days=course.description.repeat_interval*i)
                 begin = form.cleaned_data['begin'] + add
                 course.units.create(begin=begin, duration=course.description.duration)
             messages.success(request, _('Course created successfully'))

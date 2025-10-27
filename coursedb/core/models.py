@@ -238,6 +238,11 @@ class CourseDescription(CreatedAtMixin):
         verbose_name=_('Duration')
     )
 
+    repeat_interval = models.IntegerField(
+        default=7,
+        verbose_name=_('Repeat interval')
+    )
+
     company = models.ForeignKey(
         Company,
         related_name='course_descriptions',
