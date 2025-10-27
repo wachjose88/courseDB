@@ -304,8 +304,18 @@ class Course(CreatedAtMixin):
         verbose_name=_('Instructors')
     )
 
+    attendees = models.ManyToManyField(
+        Client,
+        through='CourseAttendance',
+        related_name='attended_courses',
+        verbose_name=_('Attendees')
+    )
+
     def all_units(self):
         return self.units.all().order_by('begin')
+
+    def all_attendees(self):
+        return self.attendees.all().order_by('last_name')
 
     def begin(self):
         begin = self.units.all().order_by('begin').first()
@@ -349,3 +359,39 @@ class CourseUnit(models.Model):
         abstract = False
         verbose_name = _('Course unit')
         verbose_name_plural = _('Course units')
+
+
+class CourseAttendance(models.Model):
+
+    course = models.ForeignKey(
+        Course,
+        on_delete=models.CASCADE,
+        verbose_name=_('Course')
+    )
+
+    client = models.ForeignKey(
+        Client,
+        on_delete=models.CASCADE,
+        verbose_name=_('Client')
+    )
+
+    enrolled_at = models.DateTimeField(
+        verbose_name=_('Enrolled at')
+    )
+
+    paid = models.DecimalField(
+        decimal_places=2,
+        max_digits=10,
+        blank=True,
+        null=True,
+        verbose_name=_('Paid')
+    )
+
+    comments = HTMLField(
+        blank=True,
+        verbose_name=_('Comments')
+    )
+
+    class Meta:
+        verbose_name = _('Course Attendance')
+        verbose_name_plural = _('Course Attendances')

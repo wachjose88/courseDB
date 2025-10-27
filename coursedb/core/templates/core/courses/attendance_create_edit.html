@@ -1,0 +1,44 @@
+{% extends 'core/base.html' %}
+{% load i18n %}
+
+{% block title %}
+    {% if attendance %}
+        {{ attendance.client }} :: {% translate 'Attendee ::' %}
+    {% else %}
+        {% translate 'New :: Attendee ::' %}
+    {% endif %}
+    {{ course }} :: {% translate 'Course' %}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ block.super }}
+    <li class="breadcrumb-item"><a href="{% url 'core.course.list' %}">
+        {% translate 'Course' %}
+    </a></li>
+    <li class="breadcrumb-item"><a href="{% url 'core.course.details' course_id=course.id %}">
+        {{ course }}
+    </a></li>
+    {% if attendance %}
+        <li class="breadcrumb-item active" aria-current="page">
+            {% translate 'Edit attendee' %}
+        </li>
+    {% else %}
+        <li class="breadcrumb-item active" aria-current="page">
+            {% translate 'New attendee' %}
+        </li>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% if attendance %}
+        <h1>{% translate 'Edit attendee' %}</h1>
+        {% url 'core.course.attendance.edit' course_id=course.id attendance_id=attendance.id as action %}
+    {% else %}
+        <h1>{% translate 'New attendee' %}</h1>
+        {% url 'core.course.attendance.create' course_id=course.id as action %}
+    {% endif %}
+    {% url 'core.course.details' course_id=course.id as cancel %}
+
+    {% include 'core/includes/form.html' with form=form action=action cancel=cancel %}
+
+{% endblock %}

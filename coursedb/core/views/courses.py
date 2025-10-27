@@ -8,8 +8,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.utils.translation import gettext as _
 
-from core.forms import CourseDescriptionForm, CourseCreateForm, CourseUnitForm, CourseEditForm
-from core.models import CourseDescription, Course, CourseUnit
+from core.forms import CourseDescriptionForm, CourseCreateForm, CourseUnitForm, CourseEditForm, CourseAttendanceForm
+from core.models import CourseDescription, Course, CourseUnit, CourseAttendance
 
 
 @login_required
@@ -144,8 +144,12 @@ def course_edit(request, course_id):
 def course_details(request, course_id):
     course = get_object_or_404(Course, id=course_id,
                                description__company=request.user.company)
+    attendees = CourseAttendance.objects.filter(course=course).order_by(
+        'client__last_name', 'client__first_name'
+    )
     params = {
         'course': course,
+        'attendees': attendees,
     }
     return render(request, 'core/courses/details.html', params)
 
@@ -211,3 +215,37 @@ def unit_create_edit(request, course_id, unit_id=None):
         'course': course,
     }
     return render(request, 'core/courses/unit_create_edit.html', params)
+
+
+@login_required
+def course_attendance_create_edit(request, course_id, attendance_id=None):
+    course = get_object_or_404(Course, id=course_id, description__company=request.user.company)
+    attendance = None
+    if attendance_id is not None:
+        attendance = get_object_or_404(CourseAttendance, pk=attendance_id)
+    if request.method == 'POST':
+        if attendance_id is not None:
+            form = CourseAttendanceForm(request.POST, instance=attendance,
+                                        company=request.user.company)
+        else:
+            form = CourseAttendanceForm(request.POST, company=request.user.company)
+        if form.is_valid():
+            attendance_saved = form.save(commit=False)
+            attendance_saved.course = course
+            attendance_saved.save()
+            if attendance_id is not None:
+                messages.success(request, _('A new attendee was successfully enrolled'))
+            else:
+                messages.success(request, _('An enrollment was successfully edited'))
+            return redirect('core.course.details', course_id=course.id)
+    else:
+        if attendance_id is not None:
+            form = CourseAttendanceForm(instance=attendance, company=request.user.company)
+        else:
+            form = CourseAttendanceForm(company=request.user.company)
+    params = {
+        'form': form,
+        'course': course,
+        'attendance': attendance,
+    }
+    return render(request, 'core/courses/attendance_create_edit.html', params)

@@ -5,8 +5,24 @@ from django_countries.widgets import CountrySelectWidget
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field.formfields import SplitPhoneNumberField
 
-from core.models import User, Company, Client, CourseDescription, Course
+from core.models import User, Company, Client, CourseDescription, Course, CourseAttendance
 from core.fields import BootstrapSplitPhoneNumberField
+
+
+class CourseAttendanceForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        company = kwargs.pop('company')
+        super(CourseAttendanceForm, self).__init__(*args, **kwargs)
+        self.fields['client'].queryset = Client.objects.filter(
+            is_instructor=False,
+            company=company
+        )
+        self.fields['enrolled_at'].widget=forms.DateTimeInput(attrs={'type': 'datetime-local'})
+
+    class Meta:
+        model = CourseAttendance
+        exclude = ('course',)
 
 
 class CourseUnitForm(forms.Form):
@@ -39,7 +55,7 @@ class CourseCreateForm(forms.ModelForm):
 
     class Meta:
         model = Course
-        exclude = ('created_at',)
+        exclude = ('created_at', 'attendees')
 
 
 class CourseEditForm(forms.ModelForm):
@@ -54,7 +70,7 @@ class CourseEditForm(forms.ModelForm):
 
     class Meta:
         model = Course
-        exclude = ('created_at',)
+        exclude = ('created_at', 'attendees')
 
 
 class CourseAdminForm(forms.ModelForm):
