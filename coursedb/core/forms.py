@@ -37,6 +37,21 @@ class CourseUnitForm(forms.Form):
     )
 
 
+class CourseSelectCreateForm(forms.Form):
+
+    description = forms.ChoiceField(
+        label=_('Description'),
+    )
+
+    def __init__(self, *args, **kwargs):
+        company = kwargs.pop('company')
+        super(CourseSelectCreateForm, self).__init__(*args, **kwargs)
+        choices = []
+        for description in CourseDescription.objects.filter(company=company).order_by('title'):
+            choices.append((description.id, description.title))
+        self.fields['description'].choices = choices
+
+
 class CourseCreateForm(forms.ModelForm):
 
     begin = forms.DateTimeField(
@@ -55,7 +70,7 @@ class CourseCreateForm(forms.ModelForm):
 
     class Meta:
         model = Course
-        exclude = ('created_at', 'attendees')
+        exclude = ('created_at', 'attendees', 'description')
 
 
 class CourseEditForm(forms.ModelForm):
@@ -70,7 +85,8 @@ class CourseEditForm(forms.ModelForm):
 
     class Meta:
         model = Course
-        exclude = ('created_at', 'attendees')
+        fields = ['description', 'title_extension', 'additional_description',
+                  'actual_costs', 'instructors', ]
 
 
 class CourseAdminForm(forms.ModelForm):

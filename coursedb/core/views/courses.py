@@ -8,7 +8,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.utils.translation import gettext as _
 
-from core.forms import CourseDescriptionForm, CourseCreateForm, CourseUnitForm, CourseEditForm, CourseAttendanceForm
+from core.forms import CourseDescriptionForm, CourseCreateForm, CourseUnitForm, CourseEditForm, CourseAttendanceForm, \
+    CourseSelectCreateForm
 from core.models import CourseDescription, Course, CourseUnit, CourseAttendance
 
 
@@ -98,15 +99,28 @@ def course_list(request):
 @login_required
 def course_create(request):
     if request.method == 'POST':
+        form = CourseSelectCreateForm(request.POST, company=request.user.company)
+        if form.is_valid():
+            description_id = form.cleaned_data['description']
+            return redirect('core.course.create_final', description_id=description_id)
+    else:
+        form = CourseSelectCreateForm(company=request.user.company)
+    params = {
+        'form': form,
+    }
+    return render(request, 'core/courses/create.html', params)
+
+
+@login_required
+def course_create_final(request, description_id):
+    description = get_object_or_404(CourseDescription,
+                                    pk=description_id,
+                                    company=request.user.company)
+    if request.method == 'POST':
         form = CourseCreateForm(request.POST, company=request.user.company)
         if form.is_valid():
-            set_standard_costs = False
-            actual_costs = form.cleaned_data['actual_costs']
-            if not actual_costs:
-                set_standard_costs = True
             course = form.save(commit=False)
-            if set_standard_costs:
-                course.actual_costs = course.description.standard_costs
+            course.description = description
             course.save()
             for i in range(0, course.description.units):
                 add = timedelta(days=course.description.repeat_interval*i)
@@ -115,11 +129,14 @@ def course_create(request):
             messages.success(request, _('Course created successfully'))
             return redirect('core.course.details', course_id=course.id)
     else:
-        form = CourseCreateForm(company=request.user.company)
+        form = CourseCreateForm(company=request.user.company, initial={
+            'actual_costs': description.standard_costs
+        })
     params = {
         'form': form,
+        'description': description,
     }
-    return render(request, 'core/courses/create.html', params)
+    return render(request, 'core/courses/create_final.html', params)
 
 
 @login_required
@@ -222,7 +239,7 @@ def course_attendance_create_edit(request, course_id, attendance_id=None):
     course = get_object_or_404(Course, id=course_id, description__company=request.user.company)
     attendance = None
     if attendance_id is not None:
-        attendance = get_object_or_404(CourseAttendance, pk=attendance_id)
+        attendance = get_object_or_404(CourseAttendance, pk=attendance_id, course=course)
     if request.method == 'POST':
         if attendance_id is not None:
             form = CourseAttendanceForm(request.POST, instance=attendance,
@@ -249,3 +266,12 @@ def course_attendance_create_edit(request, course_id, attendance_id=None):
         'attendance': attendance,
     }
     return render(request, 'core/courses/attendance_create_edit.html', params)
+
+
+@login_required
+def course_attendance_delete(request, course_id, attendance_id):
+    course = get_object_or_404(Course, id=course_id, description__company=request.user.company)
+    attendance = get_object_or_404(CourseAttendance, pk=attendance_id, course=course)
+    attendance.delete()
+    messages.success(request, _('The user was unenrolled successfully'))
+    return redirect('core.course.details', course_id=course.id)

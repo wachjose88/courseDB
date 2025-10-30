@@ -30,6 +30,8 @@ urlpatterns = [
          name='core.course.list'),
     path('course/create', courses.course_create,
          name='core.course.create'),
+    path('course/create/description/<int:description_id>', courses.course_create_final,
+         name='core.course.create_final'),
     path('course/<int:course_id>', courses.course_details,
          name='core.course.details'),
     path('course/<int:course_id>/edit', courses.course_edit,
@@ -46,6 +48,8 @@ urlpatterns = [
          name='core.course.attendance.edit'),
     path('course/<int:course_id>/attendee/new', courses.course_attendance_create_edit,
          name='core.course.attendance.create'),
+    path('course/<int:course_id>/attendee/<int:attendance_id>/delete', courses.course_attendance_delete,
+         name='core.course.attendance.delete'),
 
     path("login/", av.LoginView.as_view(), name="login"),
     path("logout/", av.LogoutView.as_view(), name="logout"),

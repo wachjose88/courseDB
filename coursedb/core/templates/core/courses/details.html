@@ -36,12 +36,18 @@
                 <div class="card-header">{% translate 'Detail' %}</div>
                 <div class="card-body">
                     <h5 class="card-title mb-3">{% translate 'Description' %}</h5>
-                    <h6 class="card-subtitle mb-2 text-body-secondary">{% translate 'Short' %}</h6>
-                    {{ course.description.short_description|safe }}
-                    <h6 class="card-subtitle mb-2 text-body-secondary">{% translate 'Long' %}</h6>
-                    {{ course.description.long_description|safe }}
-                    <h6 class="card-subtitle mb-2 text-body-secondary">{% translate 'Additional' %}</h6>
-                    {{ course.additional_description|safe }}
+                    {% if course.description.short_description %}
+                        <h6 class="card-subtitle mb-2 text-body-secondary">{% translate 'Short' %}</h6>
+                        {{ course.description.short_description|safe }}
+                    {% endif %}
+                    {% if course.description.long_description %}
+                        <h6 class="card-subtitle mb-2 text-body-secondary">{% translate 'Long' %}</h6>
+                        {{ course.description.long_description|safe }}
+                    {% endif %}
+                    {% if course.additional_description %}
+                        <h6 class="card-subtitle mb-2 text-body-secondary">{% translate 'Additional' %}</h6>
+                        {{ course.additional_description|safe }}
+                    {% endif %}
                     <h5 class="card-title">{% translate 'Costs' %}</h5>
                     <p>{{ request.user.company.currency }} {{ course.actual_costs }}</p>
                     <h5 class="card-title">{% translate 'Instructor' %}</h5>
@@ -61,6 +67,7 @@
                             class="btn btn-outline-success btn-sm">
                         <i class="bi bi-pencil"></i> {% translate 'Add unit' %}
                     </a>
+                    {% if course.all_units %}
                     <table class="table table-striped table-hover">
                         <thead>
                             <tr>
@@ -93,6 +100,9 @@
                             {% endfor %}
                         </tbody>
                     </table>
+                    {% else %}
+                        <p class="card-text mt-3">{% translate 'No units yet.' %}</p>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -105,6 +115,7 @@
                     class="btn btn-outline-success btn-sm">
                 <i class="bi bi-pencil"></i> {% translate 'New attendee' %}
             </a>
+            {% if attendees %}
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
@@ -125,22 +136,25 @@
                                 {{ attendee.client }}
                             </td>
                             <td>{{ attendee.enrolled_at|date:'DATETIME_FORMAT' }}</td>
-                            <td>{{ request.user.company.currency }} {{ attendee.paid }}</td>
+                            <td>{{ request.user.company.currency }} {{ attendee.paid_formatted }}</td>
                             <td>
                                 <a href="{% url 'core.course.attendance.edit' course_id=course.id attendance_id=attendee.id %}"
                                         class="btn btn-outline-success btn-sm">
                                     <i class="bi bi-pencil"></i>
                                 </a>
-                                {% comment %}<a href="{% url 'core.course.unit.delete' course_id=course.id unit_id=unit.id %}"
+                                <a href="{% url 'core.course.attendance.delete' course_id=course.id attendance_id=attendee.id %}"
                                         class="btn btn-outline-danger btn-sm"
-                                        onclick="return confirm('{% translate 'Are you sure you want to delete this course unit?' %}')">
+                                        onclick="return confirm('{% translate 'Are you sure you want to unenroll the user from this course?' %}')">
                                     <i class="bi bi-trash"></i>
-                                </a>{% endcomment %}
+                                </a>
                             </td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
+            {% else %}
+                <p class="card-text mt-3">{% translate 'No attendees yet.' %}</p>
+            {% endif %}
         </div>
     </div>
 

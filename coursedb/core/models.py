@@ -392,6 +392,11 @@ class CourseAttendance(models.Model):
         verbose_name=_('Comments')
     )
 
+    def paid_formatted(self):
+        if self.paid is None:
+            return '0'
+        return f'{self.paid}'
+
     class Meta:
         verbose_name = _('Course Attendance')
         verbose_name_plural = _('Course Attendances')
