@@ -19,6 +19,9 @@
 {% block content %}
     <h1>
         {% translate 'Courses' %}
+        {% if description %}
+            {% translate 'of' %} {{ description.title }}
+        {% endif %}
         ({{ courses.number }}/{{ courses.paginator.num_pages }})
     </h1>
 
@@ -36,6 +39,7 @@
                 <th>{% translate 'Title' %}</th>
                 <th>{% translate 'Begin' %}</th>
                 <th>{% translate 'Units' %}</th>
+                <th>{% translate 'Attendees' %}</th>
                 <th>{% translate 'Actions' %}</th>
             </tr>
         </thead>
@@ -49,6 +53,7 @@
                     </td>
                     <td>{{ course.begin|date:'DATETIME_FORMAT' }}</td>
                     <td>{{ course.units.count }}</td>
+                    <td>{{ course.attendees.count }}</td>
                     <td>
                         <a href="{% url 'core.course.details' course_id=course.id %}"
                                 class="btn btn-outline-primary btn-sm">

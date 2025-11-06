@@ -33,6 +33,7 @@
         <thead>
             <tr>
                 <th>{% translate 'Title' %}</th>
+                <th>{% translate '# Courses' %}</th>
                 <th>{% translate 'Actions' %}</th>
             </tr>
         </thead>
@@ -40,6 +41,7 @@
             {% for description in descriptions %}
                 <tr>
                     <td>{{ description.title }}</td>
+                    <td>{{ description.courses.count }}</td>
                     <td>
                         <a href="{% url 'core.course.description.edit' description_id=description.id %}"
                                 class="btn btn-outline-success btn-sm">
@@ -47,7 +49,11 @@
                         </a>
                         <a href="{% url 'core.course.description.copy' description_id=description.id %}"
                                 class="btn btn-outline-secondary btn-sm">
-                            <i class="bi bi-copy"></i> {% translate 'Copy' %}
+                            <i class="bi bi-list-nested"></i> {% translate 'Copy' %}
+                        </a>
+                        <a href="{% url 'core.course.list' description_id=description.id %}"
+                                class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-copy"></i> {% translate 'Courses' %}
                         </a>
                         <a href="{% url 'core.course.description.delete' description_id=description.id %}"
                                 class="btn btn-outline-danger btn-sm"

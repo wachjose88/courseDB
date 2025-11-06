@@ -5,9 +5,12 @@ from django.contrib.auth import views as av
 
 urlpatterns = [
     path('', base.index, name='core.index'),
+
     path('client/list', clients.client_list, name='core.client.list'),
     path('client/create', clients.client_create_edit,
          name='core.client.create'),
+    path('client/<int:client_id>/details', clients.client_details,
+         name='core.client.details'),
     path('client/<int:client_id>/edit', clients.client_create_edit,
          name='core.client.edit'),
     path('client/<int:client_id>/delete', clients.client_delete,
@@ -27,6 +30,8 @@ urlpatterns = [
          name='core.course.description.copy'),
 
     path('course/list', courses.course_list,
+         name='core.course.list'),
+    path('course/list/description/<int:description_id>', courses.course_list,
          name='core.course.list'),
     path('course/create', courses.course_create,
          name='core.course.create'),

@@ -15,8 +15,11 @@
         {% translate 'Client' %}
     </a></li>
     {% if client %}
+        <li class="breadcrumb-item"><a href="{% url 'core.client.details' client_id=client.id %}">
+            {{ client.name }}
+        </a></li>
         <li class="breadcrumb-item active" aria-current="page">
-            {% translate 'Edit' %}: {{ client.name }}
+            {% translate 'Edit' %}
         </li>
     {% else %}
         <li class="breadcrumb-item active" aria-current="page">

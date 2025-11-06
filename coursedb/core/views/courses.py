@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.utils.translation import gettext as _
@@ -83,15 +84,21 @@ def course_description_copy(request, description_id):
 
 
 @login_required
-def course_list(request):
-    courses = Course.objects.filter(
-        description__company=request.user.company,
-    ).distinct().order_by('-created_at')
+def course_list(request, description_id=None):
+    condition = Q(description__company=request.user.company)
+    description = None
+    if description_id is not None:
+        description = get_object_or_404(CourseDescription,
+                                        company=request.user.company,
+                                        id=description_id)
+        condition &= Q(description__id=description_id)
+    courses = Course.objects.filter(condition).distinct().order_by('-created_at')
     paginator = Paginator(courses, settings.PAGINATOR_NUM_PER_PAGE)
     page = request.GET.get('page')
     courses = paginator.get_page(page)
     params = {
         'courses': courses,
+        'description': description,
     }
     return render(request, 'core/courses/list.html', params)
 

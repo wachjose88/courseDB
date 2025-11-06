@@ -5,7 +5,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.translation import gettext as _
 from django.conf import settings
 
-from core.models import Client
+from core.models import Client, CourseAttendance
 from forms import ClientForm
 
 
@@ -71,3 +71,16 @@ def client_copy(request, client_id):
     client.save()
     messages.success(request, _('Client copied successfully'))
     return redirect('core.client.list')
+
+
+@login_required
+def client_details(request, client_id):
+    client = get_object_or_404(Client, pk=client_id, company=request.user.company)
+    courses = CourseAttendance.objects.filter(client=client).order_by(
+        'enrolled_at'
+    )
+    params = {
+        'client': client,
+        'courses': courses,
+    }
+    return render(request, 'core/clients/details.html', params)

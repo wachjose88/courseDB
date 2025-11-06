@@ -30,6 +30,7 @@
         <thead>
             <tr>
                 <th>{% translate 'Name' %}</th>
+                <th>{% translate 'Attended courses' %}</th>
                 <th>{% translate 'Actions' %}</th>
             </tr>
         </thead>
@@ -37,6 +38,7 @@
             {% for client in clients %}
                 <tr>
                     <td>{{ client.name }}</td>
+                    <td>{{ client.attended_courses.count }}</td>
                     <td>
                         <a href="{% url 'core.client.edit' client_id=client.id %}"
                                 class="btn btn-outline-success btn-sm">
@@ -45,6 +47,10 @@
                         <a href="{% url 'core.client.copy' client_id=client.id %}"
                                 class="btn btn-outline-secondary btn-sm">
                             <i class="bi bi-copy"></i> {% translate 'Copy' %}
+                        </a>
+                        <a href="{% url 'core.client.details' client_id=client.id %}"
+                                class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-info-circle"></i> {% translate 'Details' %}
                         </a>
                         <a href="{% url 'core.client.delete' client_id=client.id %}"
                                 class="btn btn-outline-danger btn-sm"
