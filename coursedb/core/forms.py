@@ -4,6 +4,7 @@ from django.contrib.auth.forms import UserChangeForm
 from django_countries.widgets import CountrySelectWidget
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field.formfields import SplitPhoneNumberField
+from dateutil import tz
 
 from core.models import User, Company, Client, CourseDescription, Course, CourseAttendance
 from core.fields import BootstrapSplitPhoneNumberField
@@ -18,7 +19,13 @@ class CourseAttendanceForm(forms.ModelForm):
             is_instructor=False,
             company=company
         )
-        self.fields['enrolled_at'].widget=forms.DateTimeInput(attrs={'type': 'datetime-local'})
+        self.fields['enrolled_at'].widget=forms.DateTimeInput(
+            attrs={'type': 'datetime-local'})
+        if 'enrolled_at' in self.initial.keys():
+            enrolled = self.initial['enrolled_at']
+            to_zone = tz.tzlocal()
+            enrolled = enrolled.astimezone(to_zone)
+            self.initial['enrolled_at'] = f'{enrolled:%Y-%m-%d %H:%M}'
 
     class Meta:
         model = CourseAttendance

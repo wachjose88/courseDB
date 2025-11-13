@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
-from django.utils import timezone
+from dateutil import tz
 from django.utils.translation import gettext as _
 
 from core.forms import CourseDescriptionForm, CourseCreateForm, CourseUnitForm, CourseEditForm, CourseAttendanceForm, \
@@ -205,6 +205,8 @@ def unit_create_edit(request, course_id, unit_id=None):
         unit = get_object_or_404(CourseUnit, id=unit_id, course__id=course_id,
                                  course__description__company=request.user.company)
         begin = unit.begin
+        to_zone = tz.tzlocal()
+        begin = begin.astimezone(to_zone)
         data = {
             'begin': f'{begin:%Y-%m-%d %H:%M}',
             'duration': unit.duration,
