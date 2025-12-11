@@ -263,8 +263,15 @@ def course_attendance_create_edit(request, course_id, attendance_id=None):
                 messages.success(request, _('A new attendee was successfully enrolled'))
             else:
                 messages.success(request, _('An enrollment was successfully edited'))
+            if request.session['attendance_edit_to'] == 'client':
+                return redirect('core.client.details', client_id=attendance_saved.client.id)
             return redirect('core.course.details', course_id=course.id)
     else:
+        ref = request.META.get('HTTP_REFERER')
+        if 'client' in ref:
+            request.session['attendance_edit_to'] = 'client'
+        else:
+            request.session['attendance_edit_to'] = 'course'
         if attendance_id is not None:
             form = CourseAttendanceForm(instance=attendance, company=request.user.company)
         else:
